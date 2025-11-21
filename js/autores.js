@@ -35,29 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function loadAuthors() {
     try {
-      // Usamos fetchApi, que es público para GET
-      const response = await fetchApi("/autores");
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message);
-
-      tableBody.innerHTML = ""; // Limpiar tabla
-
-      data.data.forEach((author) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${author.first_name} ${author.last_name}</td>
-          <td>${author.biography || "N/A"}</td>
-          <td>
-            <button class="delete-button" data-id="${author._id}">
-              Eliminar (Protegido)
-            </button>
-          </td>
-        `;
-        tableBody.appendChild(tr);
-      });
+      // Usar la función compartida
+      await authorsCommon.loadAuthorsTable(tableBody);
     } catch (error) {
-      showMessage(error.message, true);
+      showMessage(error.message || "Error inesperado", true);
     }
   }
 
@@ -67,21 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function deleteAuthor(authorId) {
     try {
-      // ¡Esta es la ruta protegida!
-      // 'fetchApi' añadirá el token 'x-token' automáticamente.
-      const response = await fetchApi(`/autores/${authorId}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Error al eliminar");
-      }
-
-      // ¡ÉXITO!
+      await authorsCommon.deleteAuthor(authorId);
       showMessage("Autor eliminado correctamente.", false);
-
       // Refrescar la lista de autores
       loadAuthors();
     } catch (error) {

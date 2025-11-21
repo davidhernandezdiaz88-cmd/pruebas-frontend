@@ -97,26 +97,13 @@ document.addEventListener("DOMContentLoaded", () => {
    * Carga y muestra la lista de autores (Ruta Pública)
    */
   async function loadAuthors() {
+    // Seguridad: si el DOM no tiene el contenedor, salir sin error
+    if (!authorsList) return;
+
     try {
-      const response = await fetchApi("/autores"); // Método GET es el default
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message);
-
-      // Limpiar lista
-      authorsList.innerHTML = "";
-
-      // Renderizar cada autor
-      data.data.forEach((author) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <span>${author.first_name} ${author.last_name}</span>
-          <button class="detail-button" data-id="${author._id}">Ver Detalle (Protegido)</button>
-        `;
-        authorsList.appendChild(li);
-      });
+      await authorsCommon.loadAuthorsList(authorsList);
     } catch (error) {
-      showMessage(error.message, true);
+      showMessage(error.message || "Error inesperado", true);
     }
   }
 
@@ -125,30 +112,16 @@ document.addEventListener("DOMContentLoaded", () => {
    * Carga los detalles de un autor (Ruta Protegida)
    */
   async function loadAuthorDetail(authorId) {
+    // Seguridad: si no existe el contenedor de detalle, no intentar renderizar
+    if (!authorDetailResult) return;
+
     try {
       authorDetailResult.innerHTML = "Cargando...";
-
-      // ¡Esta petición SÍ necesita el token!
-      // Nuestro 'fetchApi' lo añadirá automáticamente.
-      const response = await fetchApi(`/autores/${authorId}`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        // El 'fetchApi' maneja el 401, pero si hay otro error (ej. 404)
-        throw new Error(data.message || "Error al cargar detalle");
-      }
-
-      // Éxito
-      const author = data.data;
-      authorDetailResult.innerHTML = `
-        <p><strong>ID:</strong> ${author._id}</p>
-        <p><strong>Nombre:</strong> ${author.first_name} ${author.last_name}</p>
-        <p><strong>Biografía:</strong> ${author.biography}</p>
-      `;
+      await authorsCommon.loadAuthorDetail(authorId, authorDetailResult);
       showMessage("Detalle de ruta protegida cargado con éxito.", false);
     } catch (error) {
       authorDetailResult.innerHTML = "";
-      showMessage(error.message, true);
+      showMessage(error.message || "Error inesperado", true);
     }
   }
 
@@ -182,7 +155,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Asignar los manejadores de eventos
   loginForm.addEventListener("submit", handleLogin);
   logoutButton.addEventListener("click", handleLogout);
-  authorsList.addEventListener("click", handleAuthorListClick);
+  if (authorsList) {
+    authorsList.addEventListener("click", handleAuthorListClick);
+  }
 
   // Función de arranque
   function init() {
