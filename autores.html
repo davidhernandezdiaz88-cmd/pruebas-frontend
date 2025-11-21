@@ -15,8 +15,29 @@
 
   <main class="container">
     <h2>Lista de Autores</h2>
-    <p>Aquí puedes ver y eliminar autores. La eliminación es una ruta protegida por JWT.</p>
-    
+    <p>Aquí puedes crear, editar y eliminar autores. Las acciones de edición/eliminación están protegidas por JWT.</p>
+
+    <section id="author-form-section">
+      <h3 id="form-title">Crear Autor</h3>
+      <form id="author-form">
+        <input type="hidden" id="author-id" />
+        <div>
+          <label for="author-first">Nombre:</label>
+          <input type="text" id="author-first" required />
+        </div>
+        <div>
+          <label for="author-last">Apellido:</label>
+          <input type="text" id="author-last" required />
+        </div>
+        <div>
+          <label for="author-bio">Biografía:</label>
+          <textarea id="author-bio" rows="4"></textarea>
+        </div>
+        <button type="submit" id="author-submit">Crear</button>
+        <button type="button" id="author-cancel" class="hidden">Cancelar</button>
+      </form>
+    </section>
+
     <table id="authors-table">
       <thead>
         <tr>
@@ -26,7 +47,7 @@
         </tr>
       </thead>
       <tbody id="authors-table-body">
-        </tbody>
+      </tbody>
     </table>
   </main>
 

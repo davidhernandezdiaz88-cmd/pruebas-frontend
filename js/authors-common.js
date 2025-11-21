@@ -38,6 +38,7 @@
           <td>${author.first_name} ${author.last_name}</td>
           <td>${author.biography || "N/A"}</td>
           <td>
+            <button class="edit-button" data-id="${author._id}">Editar</button>
             <button class="delete-button" data-id="${author._id}">Eliminar (Protegido)</button>
           </td>
         `;
@@ -68,6 +69,51 @@
     }
   }
 
+  // Obtener un autor (devuelve el objeto 'author')
+  async function getAuthor(authorId) {
+    try {
+      const response = await fetchApi(`/autores/${authorId}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Error cargando autor");
+      return data.data;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  // Crear autor (POST /api/autores)
+  async function createAuthor(authorData) {
+    try {
+      const response = await fetchApi(`/autores`, {
+        method: "POST",
+        body: authorData,
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Error al crear autor");
+      return data;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  // Actualizar autor (PUT /api/autores/:id)
+  async function updateAuthor(authorId, authorData) {
+    try {
+      const response = await fetchApi(`/autores/${authorId}`, {
+        method: "PUT",
+        body: authorData,
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Error al actualizar autor");
+      return data;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
   async function deleteAuthor(authorId) {
     try {
       const response = await fetchApi(`/autores/${authorId}`, { method: "DELETE" });
@@ -85,5 +131,8 @@
     loadAuthorsTable,
     loadAuthorDetail,
     deleteAuthor,
+    getAuthor,
+    createAuthor,
+    updateAuthor,
   };
 })(window);

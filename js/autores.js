@@ -14,6 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- 2. OBTENER REFERENCIAS DEL DOM ---
   const tableBody = document.getElementById("authors-table-body");
   const messageArea = document.getElementById("message-area");
+  const authorForm = document.getElementById("author-form");
+  const authorIdInput = document.getElementById("author-id");
+  const authorFirst = document.getElementById("author-first");
+  const authorLast = document.getElementById("author-last");
+  const authorBio = document.getElementById("author-bio");
+  const formTitle = document.getElementById("form-title");
+  const authorSubmit = document.getElementById("author-submit");
+  const authorCancel = document.getElementById("author-cancel");
 
   // --- 3. FUNCIONES DE LA APLICACIÓN ---
 
@@ -74,12 +82,77 @@ document.addEventListener("DOMContentLoaded", () => {
         deleteAuthor(authorId);
       }
     }
+
+    // Editar
+    if (event.target.classList.contains("edit-button")) {
+      const authorId = event.target.dataset.id;
+      populateFormForEdit(authorId);
+    }
+  }
+
+  // Poblamos el formulario con los datos del autor para editar
+  async function populateFormForEdit(authorId) {
+    try {
+      const author = await authorsCommon.getAuthor(authorId);
+      if (!authorForm) return;
+      authorIdInput.value = author._id;
+      authorFirst.value = author.first_name || "";
+      authorLast.value = author.last_name || "";
+      authorBio.value = author.biography || "";
+      if (formTitle) formTitle.textContent = "Editar Autor";
+      if (authorSubmit) authorSubmit.textContent = "Actualizar";
+      if (authorCancel) authorCancel.classList.remove("hidden");
+    } catch (err) {
+      showMessage(err.message || "Error cargando autor", true);
+    }
+  }
+
+  function resetForm() {
+    if (!authorForm) return;
+    authorForm.reset();
+    if (authorIdInput) authorIdInput.value = "";
+    if (formTitle) formTitle.textContent = "Crear Autor";
+    if (authorSubmit) authorSubmit.textContent = "Crear";
+    if (authorCancel) authorCancel.classList.add("hidden");
+  }
+
+  // Manejar envío del formulario para crear o actualizar
+  async function handleAuthorFormSubmit(event) {
+    event.preventDefault();
+    if (!authorForm) return;
+    const id = authorIdInput ? authorIdInput.value : "";
+    const payload = {
+      first_name: authorFirst ? authorFirst.value : "",
+      last_name: authorLast ? authorLast.value : "",
+      biography: authorBio ? authorBio.value : "",
+    };
+
+    try {
+      if (id) {
+        await authorsCommon.updateAuthor(id, payload);
+        showMessage("Autor actualizado correctamente.", false);
+      } else {
+        await authorsCommon.createAuthor(payload);
+        showMessage("Autor creado correctamente.", false);
+      }
+      resetForm();
+      loadAuthors();
+    } catch (err) {
+      showMessage(err.message || "Error al guardar autor", true);
+    }
+  }
+
+  function handleCancelEdit() {
+    resetForm();
   }
 
   // --- 4. INICIALIZACIÓN Y EVENT LISTENERS ---
 
   // Asignar el manejador de eventos a la tabla
-  tableBody.addEventListener("click", handleTableClick);
+  if (tableBody) tableBody.addEventListener("click", handleTableClick);
+
+  if (authorForm) authorForm.addEventListener("submit", handleAuthorFormSubmit);
+  if (authorCancel) authorCancel.addEventListener("click", handleCancelEdit);
 
   // Cargar los autores al iniciar la página
   loadAuthors();
