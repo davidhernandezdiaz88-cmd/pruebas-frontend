@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const authorFirst = document.getElementById("author-first");
   const authorLast = document.getElementById("author-last");
   const authorBio = document.getElementById("author-bio");
+  const authorImage = document.getElementById("author-image");
   const formTitle = document.getElementById("form-title");
   const authorSubmit = document.getElementById("author-submit");
   const authorCancel = document.getElementById("author-cancel");
@@ -99,6 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
       authorFirst.value = author.first_name || "";
       authorLast.value = author.last_name || "";
       authorBio.value = author.biography || "";
+      if (authorImage) authorImage.value = author.image || "";
       if (formTitle) formTitle.textContent = "Editar Autor";
       if (authorSubmit) authorSubmit.textContent = "Actualizar";
       if (authorCancel) authorCancel.classList.remove("hidden");
@@ -111,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!authorForm) return;
     authorForm.reset();
     if (authorIdInput) authorIdInput.value = "";
+    if (authorImage) authorImage.value = "";
     if (formTitle) formTitle.textContent = "Crear Autor";
     if (authorSubmit) authorSubmit.textContent = "Crear";
     if (authorCancel) authorCancel.classList.add("hidden");
@@ -125,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
       first_name: authorFirst ? authorFirst.value : "",
       last_name: authorLast ? authorLast.value : "",
       biography: authorBio ? authorBio.value : "",
+      image: authorImage ? authorImage.value : "",
     };
 
     try {

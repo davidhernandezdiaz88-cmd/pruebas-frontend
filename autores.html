@@ -33,6 +33,10 @@
           <label for="author-bio">Biografía:</label>
           <textarea id="author-bio" rows="4"></textarea>
         </div>
+        <div>
+          <label for="author-image">URL de Imagen:</label>
+          <input type="url" id="author-image" placeholder="https://ejemplo.com/imagen.jpg" />
+        </div>
         <button type="submit" id="author-submit">Crear</button>
         <button type="button" id="author-cancel" class="hidden">Cancelar</button>
       </form>
@@ -41,6 +45,7 @@
     <table id="authors-table">
       <thead>
         <tr>
+          <th>Imagen</th>
           <th>Nombre</th>
           <th>Biografía</th>
           <th>Acciones</th>

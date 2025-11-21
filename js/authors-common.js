@@ -12,8 +12,11 @@
       targetElement.innerHTML = "";
       data.data.forEach((author) => {
         const li = document.createElement("li");
+        const imageHtml = author.image
+          ? `<img src="${author.image}" alt="${author.first_name}" style="max-width: 40px; max-height: 40px; border-radius: 4px; margin-right: 10px; vertical-align: middle;" />`
+          : "";
         li.innerHTML = `
-          <span>${author.first_name} ${author.last_name}</span>
+          ${imageHtml}<span>${author.first_name} ${author.last_name}</span>
           <button class="detail-button" data-id="${author._id}">Ver Detalle (Protegido)</button>
         `;
         targetElement.appendChild(li);
@@ -34,7 +37,11 @@
       tableBody.innerHTML = "";
       data.data.forEach((author) => {
         const tr = document.createElement("tr");
+        const imageHtml = author.image
+          ? `<img src="${author.image}" alt="${author.first_name}" style="max-width: 60px; max-height: 60px; border-radius: 4px;" />`
+          : "Sin imagen";
         tr.innerHTML = `
+          <td>${imageHtml}</td>
           <td>${author.first_name} ${author.last_name}</td>
           <td>${author.biography || "N/A"}</td>
           <td>
@@ -58,7 +65,11 @@
       if (!response.ok) throw new Error(data.message || "Error cargando detalle");
 
       const author = data.data;
+      const imageHtml = author.image
+        ? `<div style="margin-bottom: 15px;"><img src="${author.image}" alt="${author.first_name}" style="max-width: 200px; border-radius: 4px;" /></div>`
+        : "";
       targetElement.innerHTML = `
+        ${imageHtml}
         <p><strong>ID:</strong> ${author._id}</p>
         <p><strong>Nombre:</strong> ${author.first_name} ${author.last_name}</p>
         <p><strong>Biografía:</strong> ${author.biography || "N/A"}</p>
